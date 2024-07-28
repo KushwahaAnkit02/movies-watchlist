@@ -29,11 +29,32 @@ export const handleloginUser = async (userDetails) => {
     userDetails?.email,
     userDetails?.password
   );
-  console.log(res, "signInWithEmailAndPassword");
   if (res?.user?.uid) {
     const userRef = doc(db, "Users", res?.user?.uid);
     const userDetails = getDoc(userRef);
     const user = (await userDetails).data();
     return user;
+  }
+};
+export const handleAddMovie = async (data) => {
+  console.log('====================================');
+  console.log(data);
+  console.log('====================================');
+  if (data?.user) {
+    const updatedUser = {
+      name: data?.user?.name,
+      email: data?.user?.email,
+      password: data?.user?.password,
+      movies: [
+        {
+          Title: data?.data?.Title,
+          Poster: data?.data?.Poster,
+          Year: data?.data?.Year,
+          id: data?.user?.id,
+        },
+      ],
+    };
+    setDoc(doc(db, "Users", data?.user?.id), updatedUser);
+    return updatedUser;
   }
 };

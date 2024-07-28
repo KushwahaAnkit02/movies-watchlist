@@ -5,6 +5,7 @@ import { persistor, store } from "./redux/Store";
 import { PersistGate } from "redux-persist/integration/react";
 import { Provider } from "react-redux";
 import MoviesWatchList from "./components/MoviesWatchList";
+import MyWatchlist from "./components/MyWatchlist";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
             <Route path="/" element={<Navigate to="/login" />} />
             <Route path="/signup" element={<SignupScreen />} />
             <Route path="/movies" element={<MoviesWatchList />} />
+            <Route path="/my-movies" element={<MyWatchlist />} />
           </Routes>
         </BrowserRouter>
       </PersistGate>

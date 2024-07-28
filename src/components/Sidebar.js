@@ -1,10 +1,17 @@
 import React from "react";
 import { IoHomeOutline } from "react-icons/io5";
 import { PiUserCircleThin } from "react-icons/pi";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getMovies } from "../redux/Slices";
 
 const Sidebar = () => {
   const { user } = useSelector((state) => state?.data);
+  const dispatch = useDispatch();
+
+  const handleHomeBtn = () => {
+    dispatch(getMovies("batman"))
+  };
+
   return (
     <>
       <button
@@ -23,8 +30,8 @@ const Sidebar = () => {
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            clip-rule="evenodd"
-            fill-rule="evenodd"
+            clipRule="evenodd"
+            fillRule="evenodd"
             d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"
           ></path>
         </svg>
@@ -48,7 +55,9 @@ const Sidebar = () => {
                 </div>
                 <div className="mt-4 rounded-md flex bg-red-500 w-full items-center pl-2 hover:cursor-pointer">
                   <IoHomeOutline size={20} color="white" />
-                  <p className=" text-white p-2">Home</p>
+                  <button className=" text-white p-2" onClick={handleHomeBtn}>
+                    Home
+                  </button>
                 </div>
 
                 <div className="mt-4">
@@ -59,7 +68,7 @@ const Sidebar = () => {
             <div className="mt-4 flex items-center w-full rounded-full border-2 border-black items-center hover:cursor-pointer">
               <PiUserCircleThin size={40} />
               <div>
-                <p >{!user ? "GUEST" : `${user?.name}`}</p>
+                <p>{!user ? "GUEST" : `${user?.name}`}</p>
                 <p className="text-sm">{user.email}</p>
               </div>
             </div>

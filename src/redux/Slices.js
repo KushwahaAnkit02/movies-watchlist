@@ -1,5 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { handleCreateNewUser, handleloginUser } from "../Authentication";
+import {
+  handleAddMovie,
+  handleCreateNewUser,
+  handleloginUser,
+} from "../Authentication";
 import { handleGetMovies } from "../components/ApiHandle";
 
 export const createNewUser = createAsyncThunk(
@@ -9,7 +13,6 @@ export const createNewUser = createAsyncThunk(
       const response = await handleCreateNewUser(userDetails);
       return response;
     } catch (error) {
-      console.log(error.message);
       return rejectWithValue(error.code);
     }
   }
@@ -21,16 +24,26 @@ export const loginUser = createAsyncThunk(
       const response = await handleloginUser(userDetails);
       return response;
     } catch (error) {
-      console.log(error.message);
       return rejectWithValue(error.code);
     }
   }
 );
 export const getMovies = createAsyncThunk(
-  "movies",
+  "movieWatchlist",
   async (title, { rejectWithValue }) => {
     try {
       const response = await handleGetMovies(title);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.code);
+    }
+  }
+);
+export const addTowatchlist = createAsyncThunk(
+  "myWatchlist",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await handleAddMovie(data);
       return response;
     } catch (error) {
       return rejectWithValue(error.code);
@@ -41,7 +54,7 @@ export const getMovies = createAsyncThunk(
 export const Slices = createSlice({
   name: "movies-watchlist",
   initialState: {
-    user: {},
+    user: [],
     watchlist: [],
     loading: false,
     errors: null,
@@ -55,7 +68,6 @@ export const Slices = createSlice({
       state.user = action.payload;
     });
     builder.addCase(createNewUser.rejected, (state, action) => {
-      console.log(action.payload, "rejected");
       state.loading = false;
       state.errors = action.payload;
     });
@@ -63,12 +75,10 @@ export const Slices = createSlice({
       state.loading = true;
     });
     builder.addCase(loginUser.fulfilled, (state, action) => {
-      console.log(action.payload, "fulfilled");
       state.loading = false;
       state.user = action.payload;
     });
     builder.addCase(loginUser.rejected, (state, action) => {
-      console.log(action.payload, "rejected");
       state.loading = false;
       state.errors = action.payload;
     });
@@ -80,7 +90,17 @@ export const Slices = createSlice({
       state.watchlist = action.payload;
     });
     builder.addCase(getMovies.rejected, (state, action) => {
-      console.log(action);
+      state.loading = false;
+      state.errors = action.error;
+    });
+    builder.addCase(addTowatchlist?.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(addTowatchlist.fulfilled, (state, action) => {
+      state.loading = false;
+      state.user = action?.payload;
+    });
+    builder.addCase(addTowatchlist.rejected, (state, action) => {
       state.loading = false;
       state.errors = action.error;
     });

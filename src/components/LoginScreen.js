@@ -8,12 +8,11 @@ function LoginScreen() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { loading, errors } = useSelector((state) => state?.data);
-  console.log(errors);
   const [userDetails, setUserDetails] = useState({
     email: "",
     password: "",
   });
-
+  
   const handleloginUser = (e) => {
     e.preventDefault();
     if (userDetails.email.length === 0 && userDetails.password.length === 0) {
@@ -21,7 +20,6 @@ function LoginScreen() {
       return;
     }
     dispatch(loginUser(userDetails)).then((res) => {
-      console.log(res?.payload, "login");
       if (!res?.error?.message) {
         dispatch(getMovies("Batman")).then(() => {
           navigate("/movies");
@@ -33,9 +31,9 @@ function LoginScreen() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="max-w-md w-full bg-white rounded-lg p-8 space-y-6 shadow-lg">
-        {errors && (
+        {errors?.message !== "(destructured parameter) is undefined" && (
           <div>
-            <p>Error:{errors}</p>
+            <p>Error:{errors?.message}</p>
           </div>
         )}
         <div className="text-center text-2xl font-bold">

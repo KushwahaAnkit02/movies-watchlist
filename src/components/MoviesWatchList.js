@@ -1,11 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import Sidebar from "./Sidebar";
 import { IoIosSearch } from "react-icons/io";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { addTowatchlist, getMovies } from "../redux/Slices";
+import { MdAddToPhotos } from "react-icons/md";
 
 const MoviesWatchList = () => {
-  const { Search } = useSelector((state) => state?.data?.watchlist);
-  console.log(Search, "watchList");
+  const dispatch = useDispatch();
+  const { watchlist, user } = useSelector((state) => state?.data);
+  const [movieresponse, setMovieResponse] = useState();
+  const Search = watchlist?.Search;
+  const [movieTitle, setMovieTitle] = useState("Batman");
+  
+  const handleSearchInput = () => {
+    if (movieTitle?.length !== 0) {
+      dispatch(getMovies(movieTitle)).then((res) => {
+        setMovieResponse(res?.payload?.Error);
+      });
+    }
+  };
+
+  const handleSaveMovie = (data) => {
+    const watchlistArray = [];
+    watchlistArray.push(data);
+    dispatch(addTowatchlist({ user, watchlistArray }));
+  };
 
   return (
     <>
@@ -22,36 +41,49 @@ const MoviesWatchList = () => {
                 friends.
               </p>
             </div>
-
             <div className="flex pl-2 justify-center mb-4 w-full rounded-lg border-black border-2 items-center">
               <IoIosSearch size={30} />
               <input
                 type="text"
                 placeholder="Search"
                 className="p-2 outline-none rounded-l-md w-full"
+                value={movieTitle}
+                onChange={(e) => setMovieTitle(e.target.value)}
               />
-              <button className="bg-red-500 text-white p-2 rounded-r-md">
+              <button
+                className="bg-red-500 text-white p-2 rounded-r-md"
+                onClick={handleSearchInput}
+              >
                 Search
               </button>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {Search?.map((movie, i) => {
-                return (
-                  <div
-                    key={i}
-                    className="border p-4 rounded-md shadow-xl  hover:cursor-pointer"
-                  >
-                    <img
-                      src={movie?.Poster}
-                      alt={movie?.Title}
-                      className="w-full h-auto rounded-md mb-4"
-                    />
-                    <h2 className="text-xl font-semibold">{movie.Title}</h2>
-                    <p>{movie?.Year}</p>
-                  </div>
-                );
-              })}
-            </div>
+            {Search ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {Search?.map((movie, i) => {
+                  return (
+                    <div key={i} className="border p-4 rounded-md shadow-xl">
+                      <button>
+                        <MdAddToPhotos
+                          size={30}
+                          onClick={() => handleSaveMovie(movie)}
+                        />
+                      </button>
+                      <img
+                        src={movie?.Poster}
+                        alt={movie?.Title}
+                        className="w-full rounded-md mb-4"
+                      />
+                      <h2 className="text-xl font-semibold">{movie.Title}</h2>
+                      <p>{movie?.Year}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="justify-center flex pt-8">
+                <h1 className="font-bold text-xl">{movieresponse}</h1>
+              </div>
+            )}
           </div>
         </div>
       </div>

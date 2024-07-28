@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { createNewUser } from "../redux/Slices";
+import { createNewUser, getMovies } from "../redux/Slices";
 import Loader from "./Loader";
 
 function SignupScreen() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { loading, errors } = useSelector((state) => state.data);
-  console.log(errors,"signup");
   const [userDetails, setUserdetails] = useState({
     name: "",
     email: "",
@@ -30,7 +29,9 @@ function SignupScreen() {
       } else {
         dispatch(createNewUser(userDetails)).then((res) => {
           if (res.payload) {
-            navigate("/movies");
+            dispatch(getMovies("Batman")).then(() => {
+              navigate("/movies");
+            });
           }
         });
       }
