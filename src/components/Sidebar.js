@@ -1,16 +1,12 @@
 import React from "react";
 import { IoHomeOutline } from "react-icons/io5";
 import { PiUserCircleThin } from "react-icons/pi";
-import { useDispatch, useSelector } from "react-redux";
-import { getMovies } from "../redux/Slices";
+import { useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
-  const { user } = useSelector((state) => state?.data);
-  const dispatch = useDispatch();
-
-  const handleHomeBtn = () => {
-    dispatch(getMovies("batman"))
-  };
+  const { watchlist, user } = useSelector((state) => state?.data);
+  const navigate = useNavigate();
 
   return (
     <>
@@ -53,11 +49,12 @@ const Sidebar = () => {
                     className="border-2 w-full p-2 rounded-md"
                   />
                 </div>
-                <div className="mt-4 rounded-md flex bg-red-500 w-full items-center pl-2 hover:cursor-pointer">
+                <div
+                  className="mt-4 rounded-md flex bg-red-500 w-full items-center pl-2 hover:cursor-pointer"
+                  onClick={() => navigate("/movies")}
+                >
                   <IoHomeOutline size={20} color="white" />
-                  <button className=" text-white p-2" onClick={handleHomeBtn}>
-                    Home
-                  </button>
+                  <button className=" text-white p-2">Home</button>
                 </div>
 
                 <div className="mt-4">
@@ -65,11 +62,21 @@ const Sidebar = () => {
                 </div>
               </div>
             </div>
+            {watchlist !== "" && (
+              <div>
+                <Link
+                  to="/my-movies"
+                  className="mt-4 p-2 flex items-center w-full rounded-full border-2 border-black items-center hover:cursor-pointer"
+                >
+                  My Movies
+                </Link>
+              </div>
+            )}
             <div className="mt-4 flex items-center w-full rounded-full border-2 border-black items-center hover:cursor-pointer">
               <PiUserCircleThin size={40} />
               <div>
                 <p>{!user ? "GUEST" : `${user?.name}`}</p>
-                <p className="text-sm">{user.email}</p>
+                <p className="text-sm">{user?.email}</p>
               </div>
             </div>
           </div>

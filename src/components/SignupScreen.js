@@ -2,19 +2,18 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { createNewUser, getMovies } from "../redux/Slices";
-import Loader from "./Loader";
+import { Bounce, toast } from "react-toastify";
 
 function SignupScreen() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading, errors } = useSelector((state) => state.data);
   const [userDetails, setUserdetails] = useState({
     name: "",
     email: "",
     password: "",
   });
-  const [confirmPassword, setConfirmPassword] = useState("");
 
+  const [confirmPassword, setConfirmPassword] = useState("");
   const handleSubmitDetails = (e) => {
     e.preventDefault();
     if (
@@ -24,30 +23,68 @@ function SignupScreen() {
       confirmPassword?.length !== 0
     ) {
       if (userDetails.password !== confirmPassword) {
-        alert("Confirm password did not match");
+        toast.error("confirm password did not match", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Bounce,
+        });
         return;
       } else {
         dispatch(createNewUser(userDetails)).then((res) => {
-          if (res.payload) {
+          if (!res.error?.message) {
             dispatch(getMovies("Batman")).then(() => {
+              toast.success("signup succesfully", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+                transition: Bounce,
+              });
               navigate("/movies");
+            });
+          } else {
+            toast.error(res?.payload, {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+              transition: Bounce,
             });
           }
         });
       }
     } else {
-      alert("all the fields are required");
+      toast.error("all the fields are required", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Bounce,
+      });
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="max-w-md w-full bg-white rounded-lg p-8 space-y-6 shadow-lg">
-        {errors && (
-          <div>
-            <p>{errors}</p>
-          </div>
-        )}
         <div className="text-center text-2xl font-bold">Create Account</div>
 
         <form className="space-y-4" onSubmit={handleSubmitDetails}>
@@ -87,16 +124,9 @@ function SignupScreen() {
               setConfirmPassword(e.target.value);
             }}
           />
-
-          {!loading ? (
-            <button className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg">
-              Log In
-            </button>
-          ) : (
-            <div className="w-full bg-blue-600 text-white rounded-lg flex justify-center items-center">
-              <Loader />
-            </div>
-          )}
+          <button className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg">
+            Log In
+          </button>
         </form>
         <div className="text-center">
           Already have an account?

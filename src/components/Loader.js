@@ -6,10 +6,10 @@ const Loader = () => {
     <div>
       <ColorRing
         visible={true}
-        height="40"
-        width="40"
+        height="70"
+        width="70"
         wrapperclassName="color-ring-wrapper"
-        colors={["white", "white", "white", "white", "white"]}
+        colors={["black", "black", "black", "black", "black"]}
       />
     </div>
   );

@@ -2,16 +2,15 @@ import React, { useState } from "react";
 import Sidebar from "./Sidebar";
 import { IoIosSearch } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
-import { addTowatchlist, getMovies } from "../redux/Slices";
-import { MdAddToPhotos } from "react-icons/md";
+import { addTowatchlist, fetchWatchList, getMovies } from "../redux/Slices";
+import { MdBookmarkAdd } from "react-icons/md";
+import { Bounce, toast } from "react-toastify";
 
 const MoviesWatchList = () => {
   const dispatch = useDispatch();
-  const { watchlist, user } = useSelector((state) => state?.data);
+  const { movies, user, watchlist } = useSelector((state) => state?.data);
   const [movieresponse, setMovieResponse] = useState();
-  const Search = watchlist?.Search;
-  const [movieTitle, setMovieTitle] = useState("Batman");
-  
+  const [movieTitle, setMovieTitle] = useState("");
   const handleSearchInput = () => {
     if (movieTitle?.length !== 0) {
       dispatch(getMovies(movieTitle)).then((res) => {
@@ -19,11 +18,46 @@ const MoviesWatchList = () => {
       });
     }
   };
-
-  const handleSaveMovie = (data) => {
-    const watchlistArray = [];
-    watchlistArray.push(data);
-    dispatch(addTowatchlist({ user, watchlistArray }));
+  const handleSaveMovie = async (data) => {
+    if (watchlist.length) {
+      const includesObject = watchlist.some(
+        (item) => item.imdbID === data.imdbID
+      );
+      if (!includesObject) {
+        dispatch(addTowatchlist({ user, data })).then((res) => {
+          if (res?.payload) {
+            toast.success("movie added", {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+              transition: Bounce,
+            });
+            dispatch(fetchWatchList(user));
+          }
+        });
+      } else {
+        toast.warn("movie already added", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Bounce,
+        });
+      }
+    } else {
+      dispatch(addTowatchlist({ user, data })).then((res) => {
+        dispatch(fetchWatchList(user));
+      });
+    }
   };
 
   return (
@@ -57,13 +91,13 @@ const MoviesWatchList = () => {
                 Search
               </button>
             </div>
-            {Search ? (
+            {movies ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {Search?.map((movie, i) => {
+                {movies?.map((movie, i) => {
                   return (
                     <div key={i} className="border p-4 rounded-md shadow-xl">
                       <button>
-                        <MdAddToPhotos
+                        <MdBookmarkAdd
                           size={30}
                           onClick={() => handleSaveMovie(movie)}
                         />

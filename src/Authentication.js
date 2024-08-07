@@ -3,7 +3,7 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { auth, db } from "./Firebase";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { arrayUnion, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 
 export const handleCreateNewUser = async (userDetails) => {
   const res = await createUserWithEmailAndPassword(
@@ -36,25 +36,35 @@ export const handleloginUser = async (userDetails) => {
     return user;
   }
 };
+
+export const handleFetchWatcList = async (user) => {
+  const userRef = doc(db, "Users", user?.id);
+  const userDetails = getDoc(userRef);
+  const User = (await userDetails).data();
+  return User?.movies;
+};
+
 export const handleAddMovie = async (data) => {
-  console.log('====================================');
-  console.log(data);
-  console.log('====================================');
   if (data?.user) {
-    const updatedUser = {
-      name: data?.user?.name,
-      email: data?.user?.email,
-      password: data?.user?.password,
-      movies: [
-        {
-          Title: data?.data?.Title,
-          Poster: data?.data?.Poster,
-          Year: data?.data?.Year,
-          id: data?.user?.id,
-        },
-      ],
-    };
-    setDoc(doc(db, "Users", data?.user?.id), updatedUser);
-    return updatedUser;
+    const userDocRef = doc(db, "Users", data?.user?.id);
+    await updateDoc(userDocRef, {
+      movies: arrayUnion(data?.data),
+    });
+    return data?.data;
+  }
+};
+export const handleDeleteMovie = async (data) => {
+  if (data?.user) {
+    const userRef = doc(db, "Users", data?.user?.id);
+    const userDetails = getDoc(userRef);
+    const getMovies = (await userDetails).data()?.movies;
+    if (getMovies) {
+      const updatedMovies = getMovies.filter((res) => {
+        return res.imdbID !== data?.movie.imdbID;
+      });
+      await updateDoc(userRef, {
+        movies: updatedMovies,
+      });
+    }
   }
 };
