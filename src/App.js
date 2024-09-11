@@ -5,25 +5,10 @@ import MoviesWatchList from "./components/MoviesWatchList";
 import MyWatchlist from "./components/MyWatchlist";
 import SignupScreen from "./components/SignupScreen";
 import TailwindLoder from "./components/TailwindLoder";
-import { Bounce, toast, ToastContainer } from "react-toastify";
-import { useEffect } from "react";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function App() {
-  // useEffect(() => {
-  //   toast.warn("🦄 Wow so easy!", {
-  //     position: "top-right",
-  //     autoClose: 3000,
-  //     // hideProgressBar: false,
-  //     closeOnClick: true,
-  //     pauseOnHover: true,
-  //     draggable: true,
-  //     progress: undefined,
-  //     theme: "colored",
-  //     transition: Bounce,
-  //   });
-  // }, []);
-
   const { loading } = useSelector((state) => state.data);
   return (
     <BrowserRouter>

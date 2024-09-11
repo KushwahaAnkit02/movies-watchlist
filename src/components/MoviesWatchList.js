@@ -66,11 +66,11 @@ const MoviesWatchList = () => {
       <div className="p-4 sm:ml-64">
         <div className="flex flex-col md:flex-row h-screen">
           <div className="flex-1 p-4 ">
-            <div className="text-center mb-8 border-2 border-red-500 rounded-lg h-40">
+            <div className="text-center mb-8 border-2 border-red-500 rounded-lg bg-red-200">
               <h1 className="text-3xl font-bold">
                 Welcome to <span className="text-red-600"> Watchlists</span>
               </h1>
-              <p>
+              <p className="">
                 Browse movies, add them to watchlists and share them with
                 friends.
               </p>
